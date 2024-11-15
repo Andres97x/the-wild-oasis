@@ -1,4 +1,6 @@
 import { eachDayOfInterval } from 'date-fns';
+import { supabase } from './supabase';
+import { notFound } from 'next/navigation';
 
 /////////////
 // GET
@@ -11,10 +13,10 @@ export async function getCabin(id) {
     .single();
 
   // For testing
-  // await new Promise((res) => setTimeout(res, 1000));
+  // await new Promise(res => setTimeout(res, 3000));
 
   if (error) {
-    console.error(error);
+    notFound();
   }
 
   return data;
@@ -39,6 +41,9 @@ export const getCabins = async function () {
     .from('cabins')
     .select('id, name, maxCapacity, regularPrice, discount, image')
     .order('name');
+
+  // For testing
+  // await new Promise(res => setTimeout(res, 3000));
 
   if (error) {
     console.error(error);
@@ -112,7 +117,7 @@ export async function getBookedDatesByCabinId(cabinId) {
 
   // Converting to actual dates to be displayed in the date picker
   const bookedDates = data
-    .map((booking) => {
+    .map(booking => {
       return eachDayOfInterval({
         start: new Date(booking.startDate),
         end: new Date(booking.endDate),
