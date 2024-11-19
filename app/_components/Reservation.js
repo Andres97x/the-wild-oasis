@@ -1,6 +1,8 @@
 import DateSelector from '@/app/_components/DateSelector';
 import ReservationForm from '@/app/_components/ReservationForm';
+import LoginMessage from '@/app/_components/LoginMessage';
 import { getBookedDatesByCabinId, getSettings } from '@/app/_lib/data-service';
+import { auth } from '@/app/_lib/auth';
 
 const Reservation = async ({ cabin }) => {
   const [bookedDates, settings] = await Promise.all([
@@ -8,14 +10,24 @@ const Reservation = async ({ cabin }) => {
     getSettings(),
   ]);
 
+  const session = await auth();
+
   return (
-    <div className='grid grid-cols-2 border border-primary-800 min-h-[400px]'>
+    <div
+      className={`grid ${
+        session?.user ? 'grid-cols-2' : 'grid-cols-1'
+      } border border-primary-800 min-h-[400px]`}
+    >
       <DateSelector
         cabin={cabin}
         bookedDates={bookedDates}
         settings={settings}
       />
-      <ReservationForm cabin={cabin} />
+      {session?.user ? (
+        <ReservationForm cabin={cabin} user={session.user} />
+      ) : (
+        <LoginMessage />
+      )}
     </div>
   );
 };
