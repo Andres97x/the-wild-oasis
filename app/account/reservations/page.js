@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const session = await auth();
+  const session = await auth(); // this function call makes pages dynamic because of interaction with cookies/headers
   const bookings = await getBookings(session.user.guestId);
 
   return (

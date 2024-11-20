@@ -39,3 +39,7 @@
   --rdp-day-height: 35px !important;
   --rdp-day-width: 35px !important;
 }
+
+.rdp-day.rdp-range_middle.rdp-selected.rdp-today {
+  color: theme('colors.accent.800') !important;
+}

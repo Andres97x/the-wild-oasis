@@ -3,9 +3,14 @@
 import { auth, signIn, signOut } from '@/app/_lib/auth';
 import { supabase } from '@/app/_lib/supabase';
 import { revalidatePath } from 'next/cache';
-import { getBooking, getBookings } from './data-service';
+import {
+  getBookedDatesByCabinId,
+  getBooking,
+  getBookings,
+} from './data-service';
 import { redirect } from 'next/navigation';
 import { isPast } from 'date-fns';
+import { isAlreadyBooked } from './utils';
 
 export async function updateGuest(formData) {
   const session = await auth();
@@ -33,7 +38,41 @@ export async function updateGuest(formData) {
   revalidatePath('/account/profile');
 }
 
-export async function deleteReservation(bookingId) {
+export async function createBooking(bookingData, formData) {
+  const session = await auth();
+  if (!session) throw new Error('You must be logged in');
+
+  // validate with ZOD as a challenge
+  const newBooking = {
+    ...bookingData,
+    guestId: user.session.guestId,
+    numGuests: Number(formData.get('numGuests')),
+    observations: formData.get('observations').slice(0, 1000),
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    isPaid: false,
+    hasBreakfast: false,
+    status: 'unconfirmed',
+  };
+
+  // checks
+  const bookedDates = getBookedDatesByCabinId(bookingData.cabinId);
+  const range = { from: bookingData.startDate, to: bookingData.endDate };
+
+  if (isAlreadyBooked(range, bookedDates))
+    throw new Error('Invalid range of dates selected');
+
+  // create booking
+  const { error } = await supabase.from('bookings').insert([newBooking]);
+
+  if (error) throw new Error('Booking could not be created');
+
+  revalidatePath(`/cabins/${bookingData.cabinId}`);
+
+  redirect('/cabins/thankyou');
+}
+
+export async function deleteBooking(bookingId) {
   // To test useOptimistic hook
   // await new Promise(res => setTimeout(res, 3000));
   // throw new Error('');
@@ -57,7 +96,7 @@ export async function deleteReservation(bookingId) {
   revalidatePath('/account/reservations');
 }
 
-export async function updateReservation(formData) {
+export async function updateBooking(formData) {
   const session = await auth();
   if (!session) throw new Error('You must be logged in');
 

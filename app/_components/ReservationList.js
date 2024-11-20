@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useOptimistic, useRef, useState } from 'react';
 import ReservationCard from './ReservationCard';
-import { deleteReservation } from '../_lib/actions';
+import { deleteBooking } from '../_lib/actions';
 
 export default function ReservationList({ bookings }) {
   const [optimisticBookings, optimisticDelete] = useOptimistic(
@@ -18,7 +18,7 @@ export default function ReservationList({ bookings }) {
 
     // Adding a try/catch to display any feedback to user if this fails, since error boundary doesn't seems to affect useOptimistic operations
     try {
-      await deleteReservation(bookingId);
+      await deleteBooking(bookingId);
     } catch {
       setErrorPopup('Reservation could not be deleted');
       dialogRef.current.show();
@@ -26,7 +26,7 @@ export default function ReservationList({ bookings }) {
   }
 
   useEffect(() => {
-    // remove any pop up error and clean up the time
+    // remove any pop up error and clean up the timer
     if (errorPopup) {
       const timer = setTimeout(() => {
         dialogRef.current.close();
