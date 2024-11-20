@@ -2,7 +2,7 @@
 import { getCabins } from '@/app/_lib/data-service';
 import CabinCard from '@/app/_components/CabinCard';
 
-const CabinList = async ({ filter }) => {
+export default async function CabinList({ filter }) {
   // noStore();
   const cabins = await getCabins();
 
@@ -32,6 +32,4 @@ const CabinList = async ({ filter }) => {
       ))}
     </div>
   );
-};
-
-export default CabinList;
+}

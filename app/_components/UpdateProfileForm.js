@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { updateGuest } from '@/app/_lib/actions';
+import SubmitButton from './SubmitButton';
 
 const UpdateProfileForm = ({ guest, children }) => {
   const [count, setCount] = useState(0);
@@ -63,16 +64,7 @@ const UpdateProfileForm = ({ guest, children }) => {
 };
 
 function Button() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className='bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300'
-      disabled={pending}
-    >
-      {pending ? 'Updating...' : 'Update profile'}
-    </button>
-  );
+  return <SubmitButton pendingLabel='Updating...'>Update profile</SubmitButton>;
 }
 
 export default UpdateProfileForm;
