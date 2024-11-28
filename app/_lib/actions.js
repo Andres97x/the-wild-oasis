@@ -45,7 +45,7 @@ export async function createBooking(bookingData, formData) {
   // validate with ZOD as a challenge
   const newBooking = {
     ...bookingData,
-    guestId: user.session.guestId,
+    guestId: session.user.guestId,
     numGuests: Number(formData.get('numGuests')),
     observations: formData.get('observations').slice(0, 1000),
     extrasPrice: 0,
