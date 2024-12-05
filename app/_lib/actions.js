@@ -56,8 +56,10 @@ export async function createBooking(bookingData, formData) {
   };
 
   // checks
-  const bookedDates = getBookedDatesByCabinId(bookingData.cabinId);
+  const bookedDates = await getBookedDatesByCabinId(bookingData.cabinId);
   const range = { from: bookingData.startDate, to: bookingData.endDate };
+
+  console.log(bookedDates);
 
   if (isAlreadyBooked(range, bookedDates))
     throw new Error('Invalid range of dates selected');
